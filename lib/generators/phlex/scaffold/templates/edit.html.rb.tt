@@ -1,0 +1,19 @@
+class Views::<%= plural_table_name.camelize %>::Edit < Phlex::HTML
+  def initialize(<%= singular_table_name %>:)
+    @<%= singular_table_name %> = <%= singular_table_name %>
+  end
+
+  def template
+    div(class: "container mx-auto px-4") do
+      div(class: "flex items-center justify-between py-8") do
+        h1(class: "text-2xl font-bold") { "Editing <%= singular_table_name.titleize %>" }
+      end
+
+      render Views::<%= plural_table_name.camelize %>::Form.new(<%= singular_table_name %>: @<%= singular_table_name %>)
+
+      a(href: <%= singular_table_name %>_path(@<%= singular_table_name %>)) { "Show" }
+      text " | "
+      a(href: <%= plural_table_name %>_path) { "Back" }
+    end
+  end
+end

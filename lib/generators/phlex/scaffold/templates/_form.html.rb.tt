@@ -1,0 +1,32 @@
+class Views::<%= plural_table_name.camelize %>::Form < Phlex::HTML
+  def initialize(<%= singular_table_name %>:)
+    @<%= singular_table_name %> = <%= singular_table_name %>
+  end
+
+  def template
+    form_with(model: @<%= singular_table_name %>, class: "contents") do |form|
+      if @<%= singular_table_name %>.errors.any?
+        div(id: "error_explanation", class: "bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3") do
+          h2 { "<%= pluralize(@<%= singular_table_name %>.errors.count, \"error\") %> prohibited this <%= singular_table_name %> from being saved:" }
+
+          ul do
+            @<%= singular_table_name %>.errors.each do |error|
+              li { error.full_message }
+            end
+          end
+        end
+      end
+
+<% attributes.each do |attribute| -%>
+      div(class: "my-5") do
+        form.label :<%= attribute.name %>
+        form.<%= attribute.field_type %> :<%= attribute.name %>, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full"
+      end
+<% end -%>
+
+      div(class: "inline") do
+        form.submit(class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer")
+      end
+    end
+  end
+end

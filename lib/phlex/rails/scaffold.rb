@@ -6,7 +6,7 @@ module Phlex
   module Rails
     module Scaffold
       class Error < StandardError; end
-      # Your code goes here...
+      Rails::Generators.options[:rails][:template_engine] = :phlex
     end
   end
 end
