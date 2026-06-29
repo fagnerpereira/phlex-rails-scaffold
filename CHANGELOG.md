@@ -9,3 +9,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Initial implementation of Phlex Rails scaffold generator.
+- Added `railties` as a dependency.
