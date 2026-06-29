@@ -1,24 +1,39 @@
-class Views::<%= plural_table_name.camelize %>::Index < Phlex::HTML
+class Views::<%= (controller_class_path + [plural_table_name]).map(&:camelize).join("::") %>::Index < Phlex::HTML
+  include Phlex::Rails::Helpers
+
   def initialize(<%= plural_table_name %>:)
     @<%= plural_table_name %> = <%= plural_table_name %>
   end
 
   def template
-    div(class: "container mx-auto px-4") do
-      div(class: "flex items-center justify-between py-8") do
-        h1(class: "text-2xl font-bold") { "<%= plural_table_name.titleize %>" }
-        a(href: new_<%= singular_table_name %>_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium") { "New <%= singular_table_name.titleize %>" }
+    h1 { "<%= human_name.pluralize %>" }
+
+    table do
+      thead do
+        tr do
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+          th { "<%= attribute.human_name %>" }
+<% end -%>
+          th { "Show" }
+          th { "Edit" }
+          th { "Destroy" }
+        end
       end
 
-      div(id: "<%= plural_table_name %>", class: "min-w-full") do
+      tbody do
         @<%= plural_table_name %>.each do |<%= singular_table_name %>|
-          div do
-            h2 { <%= singular_table_name %>.<%= attributes.first.name %> }
-            a(href: <%= singular_table_name %>_path(<%= singular_table_name %>)) { "Show" }
-            a(href: edit_<%= singular_table_name %>_path(<%= singular_table_name %>)) { "Edit" }
+          tr do
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+            td { <%= singular_table_name %>.<%= attribute.column_name %> }
+<% end -%>
+            td { link_to "Show", <%= singular_table_name %> }
+            td { link_to "Edit", edit_<%= singular_table_name %>_path(<%= singular_table_name %>) }
+            td { link_to "Destroy", <%= singular_table_name %>, data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } }
           end
         end
       end
     end
+
+    link_to "New <%= human_name %>", new_<%= singular_table_name %>_path
   end
 end

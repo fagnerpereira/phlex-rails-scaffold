@@ -1,27 +1,26 @@
-class Views::<%= plural_table_name.camelize %>::Show < Phlex::HTML
+class Views::<%= (controller_class_path + [plural_table_name]).map(&:camelize).join("::") %>::Show < Phlex::HTML
+  include Phlex::Rails::Helpers
+
   def initialize(<%= singular_table_name %>:)
     @<%= singular_table_name %> = <%= singular_table_name %>
   end
 
   def template
-    div(class: "container mx-auto px-4") do
-      div(class: "flex items-center justify-between py-8") do
-        h1(class: "text-2xl font-bold") { "<%= singular_table_name.titleize %>" }
-        a(href: edit_<%= singular_table_name %>_path(@<%= singular_table_name %>), class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium") { "Edit" }
-      end
+    h1 { "<%= human_name %>" }
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
 
-      div(class: "min-w-full") do
-<% attributes.each do |attribute| -%>
-        p do
-          strong { "<%= attribute.human_name %>:" }
-          text @<%= singular_table_name %>.<%= attribute.name %>
-        end
+    p do
+      strong { "<%= attribute.human_name %>:" }
+      plain @<%= singular_table_name %>.<%= attribute.column_name %>
+    end
 <% end -%>
-      end
 
-      a(href: edit_<%= singular_table_name %>_path(@<%= singular_table_name %>)) { "Edit" }
-      text " | "
-      a(href: <%= plural_table_name %>_path) { "Back" }
+    div do
+      link_to "Edit this <%= human_name.downcase %>", edit_<%= singular_table_name %>_path(@<%= singular_table_name %>)
+      plain " | "
+      link_to "Back to <%= human_name.pluralize.downcase %>", <%= index_helper %>_path
+      plain " | "
+      link_to "Destroy this <%= human_name.downcase %>", @<%= singular_table_name %>, data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }
     end
   end
 end
